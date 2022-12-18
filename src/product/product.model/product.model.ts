@@ -1,4 +1,5 @@
 export class ProductModel {
+  _id: string
   image: string
   title: string
   price: number
@@ -11,6 +12,6 @@ export class ProductModel {
   categories: string[]
   tags: string
   characteristics: {
-	[key: string]: string
+    [key: string]: string
   }
 }
