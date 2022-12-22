@@ -1,4 +1,4 @@
-import { IsNumber, IsString, Min, Max } from 'class-validator/types/decorator/decorators'
+import { IsNumber, IsString, Min, Max } from 'class-validator'
 
 export class CreateReviewDto {
     @IsString()
