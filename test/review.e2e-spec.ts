@@ -3,7 +3,7 @@ import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
 import { AppModule } from './../src/app.module';
 import { CreateReviewDto } from 'src/review/dto/create-review.dto';
-import { Types } from 'mongoose';
+import { Types, disconnect } from 'mongoose';
 
 const productId = new Types.ObjectId().toHexString() 
 
@@ -28,7 +28,7 @@ describe('AppController (e2e)', () => {
     await app.init();
   });
 
-  it('/review/create (POST)', async () => {
+  it('/review/create (POST) - success', async () => {
     return request(app.getHttpServer())
         .post('/review/create')
         .send(testDto)
@@ -38,4 +38,33 @@ describe('AppController (e2e)', () => {
           expect(createdId).toBeDefined()
         })
   });
+
+  it('/review/byProduct/:productId (GET) - success', async () => {
+    return request(app.getHttpServer())
+        .get('/review/byProduct/' + productId)
+        .expect(200)
+        .then(({ body }: request.Response) => {
+          expect(body.length).toBe(1)
+        })
+  });
+
+  it('/review/byProduct/:productId (GET) - fail', async () => {
+    return request(app.getHttpServer())
+        .get('/review/byProduct/' + new Types.ObjectId().toHexString())
+        .expect(200)
+        .then(({ body }: request.Response) => {
+          expect(body.length).toBe(0)
+        })
+  });
+
+  it('/review/:id (DELETE) - success', () => {
+    return request(app.getHttpServer())
+        .delete('/review/' + createdId)
+        .expect(200)
+  });
+
+
+  afterAll(() => {
+    disconnect()
+  })
 });
