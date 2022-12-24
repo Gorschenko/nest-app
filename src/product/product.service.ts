@@ -7,6 +7,12 @@ import { FindProdutDto } from './dto/find-product.dto';
 import { ProductModel } from './product.model';
 import { ProductModule } from './product.module';
 
+const sortFuncToString = `
+    function (reviews) => {
+        reviews.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+        return reviews
+    }
+`;
 @Injectable()
 export class ProductService {
     constructor(@InjectModel(ProductModel) private readonly productModel: ModelType<ProductModel>) {}
@@ -54,6 +60,13 @@ export class ProductService {
                 $addFields: {
                     reviewCount: { $size: '$reviews' },
                     reviewAvg: { $avg: '$reviews.rating' },
+                    reviews: {
+                        $function: {
+                            body: sortFuncToString,
+                            args: ['$reviews'],
+                            lang: 'js',
+                        },
+                    },
                 },
             },
         ]).exec() as unknown as (ProductModel & { review: ReviewModel[], reviewCount: number, reviewAbg: number })[]
