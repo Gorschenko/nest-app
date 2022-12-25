@@ -9,17 +9,17 @@ export const getMongoConfig = async (configService: ConfigService): Promise<Type
 }
 
 const getMongoString = (configService: ConfigService): string => {
-  // return 'mongodb://' +
-  //   configService.get('MONGO_URI') +
-  //   ':' +
-  //   configService.get('MONGO_PASSWORD') +
-  //   '@' +
-  //   configService.get('MONGO_HOST') +
-  //   ':' +
-  //   configService.get('MONGO_PORT') +
-  //   '/' +
-  //   configService.get('MONGO_AUTHDATABASE')
-  return configService.get('MONGO_URI')  + ''
+  return 'mongodb://' +
+    configService.get('MONGO_LOGIN') +
+    ':' +
+    configService.get('MONGO_PASSWORD') +
+    '@' +
+    configService.get('MONGO_HOST') +
+    ':' +
+    configService.get('MONGO_PORT') +
+    '/' +
+    configService.get('MONGO_AUTHDATABASE')
+  // return configService.get('MONGO_URI')  + ''
 }
 
 const getMongoOptions = () => ({
