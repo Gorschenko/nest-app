@@ -1,13 +1,14 @@
 import { Body, Controller, NotFoundException, Param, UseGuards, UsePipes } from '@nestjs/common';
 import { HttpCode } from '@nestjs/common/decorators/http/http-code.decorator';
 import { Delete, Get, Patch, Post } from '@nestjs/common/decorators/http/request-mapping.decorator';
+import { Cron } from '@nestjs/schedule';
+import { SchedulerRegistry } from '@nestjs/schedule/dist';
 import { JwtAuthGuard } from 'src/auth/guards/jwt.guard';
 import { HhService } from 'src/hh/hh.service';
 import { IdValidationPipe } from 'src/pipes/add-validation.pipe';
 import { CreateTopPageDto } from './dto/create-top-page.dto';
 import { FindTopPageDto } from './dto/find-top-page.dto';
 import { TOP_PAGE_NOT_FOUND_ERROR } from './top-page.constants';
-import { TopPageModel } from './top-page.model';
 import { TopPageService } from './top-page.service';
 
 @Controller('top-page')
@@ -15,6 +16,7 @@ export class TopPageController {
   constructor(
     private readonly topPageService: TopPageService,
     private readonly hhService: HhService,
+    private readonly schedulerRegistry: SchedulerRegistry,
   ) {}
   
   @UseGuards(JwtAuthGuard)
@@ -73,8 +75,10 @@ export class TopPageController {
     return this.topPageService.findByText(text)
   }
 
-  @Post('test')
+  @Cron('* * * * *', { name: 'test' })
+  // @Post('test')
   async test() {
+    // const job = this.schedulerRegistry.getCronJob('test')
     const data = await this.topPageService.findFOrHhUpdate(new Date())
     for (const page of data) {
       const hhData = await this.hhService.getData(page.category)
